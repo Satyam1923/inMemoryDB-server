@@ -1,0 +1,7 @@
+RESP -> Redis Serialization Protocol first byte define type and rest content
+\r\n is terminator for the Protocol
+*2\r\n$4\r\nPING\r\n$4\r\nTEST\r\n
+*2 -> array has 2 elements
+$4 -> next string is 4 characters
+PING 
+TEST 
