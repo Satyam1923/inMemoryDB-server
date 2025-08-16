@@ -1,0 +1,20 @@
+# Build artifacts
+/build/
+*.o
+*.d
+
+# Executable
+/my_redis_server
+
+# OS-specific
+.DS_Store
+Thumbs.db
+
+# Editor/IDE files
+.vscode/
+.idea/
+*.swp
+*~
+
+# Logs
+*.log
