@@ -19,7 +19,7 @@ class RedisDatabase{
     std::vector<std::string> keys();
     std::string type(const std::string&key);
     bool del(const std::string&key);
-    bool expire(const std::string &key, std::string &key seconds);
+    bool expire(const std::string &key, std::string &seconds);
     bool rename(const std::string&oldkey,const std::string&newkey);
 
 
