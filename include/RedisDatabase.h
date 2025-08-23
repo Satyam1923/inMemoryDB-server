@@ -15,11 +15,12 @@ class RedisDatabase{
 
     //key value operations
     void set(const std::string&key,const std::string&value);
-    bool get(const std::string&key, const std::string&value);
+    bool get(const std::string&key, std::string&value);
     std::vector<std::string> keys();
     std::string type(const std::string&key);
     bool del(const std::string&key);
-    bool expire(const std::string &key, std::string &seconds);
+    bool expire(const std::string &key, int seconds);
+    void purgeExpired();
     bool rename(const std::string&oldkey,const std::string&newkey);
 
 
@@ -37,7 +38,7 @@ class RedisDatabase{
     std::unordered_map<std::string,std::string> kv_store;
     std::unordered_map<std::string, std::vector<std::string>> list_store;
     std::unordered_map<std::string, std::unordered_map<std::string, std::string>> hash_store;
-    std::unordered_map<std::string,std::chrono::steady_clock::time_point> expiry_map;
+    std::unordered_map<std::string, std::chrono::steady_clock::time_point> expiry_map;
 };
 
 #endif

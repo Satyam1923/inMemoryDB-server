@@ -128,12 +128,17 @@ std::string RedisCommandHandler::processCommand(const std::string& commandLine){
         }
     }
     else if(cmd=="EXPIRE"){
-        if(tokens.size()<2){
-            response<<"-Error: EXPIRE requires key and time in seconds\r\n";
+        if (tokens.size() < 3)
+            return "-Error: EXPIRE requires key and time in seconds\r\n";
+        try{
+            int seconds = std::stoi(tokens[2]);
+            if (db.expire(tokens[1], seconds))
+                return "+OK\r\n";
+            else
+                return "-Error: Key not found\r\n";
         }
-        else{
-            db.expire(tokens[1],tokens[2]);
-            response<<"+OK\r\n";
+        catch (const std::exception &){
+            return "-Error: Invalid expiration time\r\n";
         }
     }
     else if(cmd=="RENAME"){
