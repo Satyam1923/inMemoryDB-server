@@ -5,6 +5,8 @@
 
 # Executable
 /my_redis_server
+/dump.my_rdb
+/.gitignore
 
 # OS-specific
 .DS_Store
