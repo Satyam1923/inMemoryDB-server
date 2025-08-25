@@ -208,25 +208,26 @@ int RedisDatabase::lrem(const std::string &key, int count, const std::string &va
 }
 
 //value at the index
-bool RedisDatabase::lindex(const std::string &key, int index, std::string &value){
+bool RedisDatabase::lindex(const std::string &key, int index, std::string &value)
+{
     std::lock_guard<std::mutex> lock(db_mutex);
     auto it = list_store.find(key);
-    if(it==list_store.end())
+    if (it == list_store.end())
         return false;
-    
-    const auto& lst = it->second;
-    if(index<0){
-        index = lst.size()+index;
-    }
-    if(index<0||static_cast<size_t>(index)>=lst.size()){
+
+    const auto &lst = it->second;
+    if (index < 0)
+        index = lst.size() + index;
+    if (index < 0 || index >= static_cast<int>(lst.size()))
         return false;
-    }
+
     value = lst[index];
     return true;
 }
 
 //set value at index
-bool RedisDatabase::lset(const std::string &key, int index, const std::string &value){
+bool RedisDatabase::lset(const std::string &key, int index, const std::string &value)
+{
     std::lock_guard<std::mutex> lock(db_mutex);
     auto it = list_store.find(key);
     if (it == list_store.end())
@@ -234,18 +235,13 @@ bool RedisDatabase::lset(const std::string &key, int index, const std::string &v
 
     auto &lst = it->second;
     if (index < 0)
-    {
         index = lst.size() + index;
-    }
-    if (index < 0 || static_cast<size_t>(index) >= lst.size())
-    {
+    if (index < 0 || index >= static_cast<int>(lst.size()))
         return false;
-    }
+
     lst[index] = value;
     return true;
 }
-
-
 
 /*
 K = key value

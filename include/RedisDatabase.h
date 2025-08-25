@@ -33,6 +33,10 @@ class RedisDatabase{
     bool lindex(const std::string &key,int index,std::string &value);
     bool lset(const std::string &key, int index, const std::string &value);
 
+
+    //hash operations
+    bool hset(const std::string&key,const std::string&field,const std::string& value);
+
     // db operations
     bool dump(const std::string &filename);
     bool load(const std::string& filename);

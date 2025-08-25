@@ -144,6 +144,9 @@ static std::string handleRename(const std::vector<std::string> &tokens, RedisDat
     return "-Error: Key not found or rename failed\r\n";
 }
 
+
+
+//List operations
 static std::string handleLlen(const std::vector<std::string> &tokens, RedisDatabase &db)
 {
     if (tokens.size() < 2)
@@ -240,6 +243,64 @@ static std::string handleLset(const std::vector<std::string> &tokens, RedisDatab
     }
 }
 
+
+//Hash operations
+static std::string handleHset(const std::vector<std::string>&tokens,RedisDatabase&db){
+    if (tokens.size() < 4)
+        return "-Error: HSET requires key, field and value\r\n";
+    db.hset(tokens[1],tokens[2],tokens[3]);
+    return ":1\r\n";
+}
+
+static std::string handleHget(const std::vector<std::string> &tokens, RedisDatabase &db)
+{
+    if (tokens.size() < 3)
+        return "-Error: HGET requires key and field\r\n";
+    
+}
+
+static std::string handleHexists(const std::vector<std::string> &tokens, RedisDatabase &db)
+{
+    if (tokens.size() < 3)
+        return "-Error: HEXISTS requires key and field\r\n";
+}
+
+static std::string handleHdel(const std::vector<std::string> &tokens, RedisDatabase &db)
+{
+    if (tokens.size() < 3)
+        return "-Error: HDEL requires key and value\r\n";
+}
+
+static std::string handleHgetall(const std::vector<std::string> &tokens, RedisDatabase &db)
+{
+    if (tokens.size() < 2)
+        return "-Error: HGETALL requires key\r\n";
+}
+
+static std::string handleHkeys(const std::vector<std::string> &tokens, RedisDatabase &db)
+{
+    if (tokens.size() < 2)
+        return "-Error: HKEYS requires key\r\n";
+}
+
+static std::string handleHvals(const std::vector<std::string> &tokens, RedisDatabase &db)
+{
+    if (tokens.size() < 4)
+        return "-Error: HVALS requires key\r\n";
+}
+
+static std::string handleHlen(const std::vector<std::string> &tokens, RedisDatabase &db)
+{
+    if (tokens.size() < 2)
+        return "-Error: HLEN requires key\r\n";
+}
+
+static std::string handleHmset(const std::vector<std::string> &tokens, RedisDatabase &db)
+{
+    if (tokens.size() < 4||(tokens.size()%2)==1)
+        return "-Error: HNSET requires key, field and value\r\n";
+}
+
 RedisCommandHandler::RedisCommandHandler() {};
 
 std::string RedisCommandHandler::processCommand(const std::string &commandLine)
@@ -291,6 +352,27 @@ std::string RedisCommandHandler::processCommand(const std::string &commandLine)
         return handleLindex(tokens, db);
     else if (cmd == "LSET")
         return handleLset(tokens, db);
+
+    // Hash operations
+    else if(cmd=="HSET")
+        return handleHset(tokens,db);
+    else if (cmd == "HGET")
+        return handleHget(tokens, db);
+    else if (cmd == "HEXISTS")
+        return handleHexists(tokens, db);
+    else if (cmd == "HDEL")
+        return handleHdel(tokens, db);
+    else if (cmd == "HGETALL")
+        return handleHgetall(tokens, db);
+    else if (cmd == "HKEYS")
+        return handleHkeys(tokens, db);
+    else if (cmd == "HVALS")
+        return handleHvals(tokens, db);
+    else if (cmd == "HLEN")
+        return handleHlen(tokens, db);
+    else if (cmd == "HMSET")
+        return handleHmset(tokens, db);
+    
     else
         return "-Error:Unkown command\r\n";
 }
