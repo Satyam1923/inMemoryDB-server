@@ -129,7 +129,7 @@ static std::string handleExpire(const std::vector<std::string> &tokens, RedisDat
         else
             return "-Error: Key not found\r\n";
     }
-    catch (const std::exception &)
+    catch (const std::exception &e)
     {
         return "-Error: Invalid expiration time\r\n";
     }
@@ -147,6 +147,20 @@ static std::string handleRename(const std::vector<std::string> &tokens, RedisDat
 
 
 //List operations
+
+static std::string handleLget(const std::vector<std::string>&tokens, RedisDatabase& db){
+    if(tokens.size()<2)
+        return "-Error: LGET requries a key\r\n";
+    auto elems = db.lget(tokens[1]);
+    std::ostringstream oss;
+    oss<<"*"<<elems.size()<<"\r\n";
+    for(const auto&e:elems){
+        oss<<"$"<<e.size()<<"\r\n"<<e<<"\r\n";
+    }
+    return oss.str();
+}
+
+
 static std::string handleLlen(const std::vector<std::string> &tokens, RedisDatabase &db)
 {
     if (tokens.size() < 2)
@@ -160,17 +174,23 @@ static std::string handleLpush(const std::vector<std::string> &tokens, RedisData
 {
     if (tokens.size() < 3)
         return "-Error: LPUSH requires key and value\r\n";
-    db.lpush(tokens[1],tokens[2]);
-    size_t len = db.llen(tokens[1]);
-    return ":"+std::to_string(len)+"\r\n";
+    for (size_t i = 2; i < tokens.size(); ++i)
+    {
+        db.lpush(tokens[1], tokens[i]);
+    }
+    ssize_t len = db.llen(tokens[1]);
+    return ":" + std::to_string(len) + "\r\n";
 }
 
 static std::string handleRpush(const std::vector<std::string> &tokens, RedisDatabase &db)
 {
     if (tokens.size() < 3)
         return "-Error: RPUSH requires key and value\r\n";
-    db.rpush(tokens[1],tokens[2]);
-    size_t len = db.llen(tokens[1]);
+    for (size_t i = 2; i < tokens.size(); ++i)
+    {
+        db.rpush(tokens[1], tokens[i]);
+    }
+    ssize_t len = db.llen(tokens[1]);
     return ":" + std::to_string(len) + "\r\n";
 }
 
@@ -203,7 +223,7 @@ static std::string handleLrem(const std::vector<std::string> &tokens, RedisDatab
         int removed = db.lrem(tokens[1],count,tokens[3]);
         return ":"+std::to_string(removed)+"\r\n";
     }
-    catch(const std::exception){
+    catch(const std::exception& e){
         return "-Error: Invalid count\r\n";
     }
 }
@@ -221,7 +241,7 @@ static std::string handleLindex(const std::vector<std::string> &tokens, RedisDat
         else
             return "$-1\r\n";
     }
-    catch (const std::exception)
+    catch (const std::exception &e)
     {
         return "-Error: Invalid index\r\n";
     }
@@ -238,7 +258,7 @@ static std::string handleLset(const std::vector<std::string> &tokens, RedisDatab
         else
             return "-Error: Index out of range\r\n";
     }
-    catch(const std::exception){
+    catch(const std::exception &e){
         return "-Error:Invalid index\r\n";
     }
 }
@@ -373,6 +393,8 @@ std::string RedisCommandHandler::processCommand(const std::string &commandLine)
         return handleRename(tokens, db);
 
     // List operations
+    else if(cmd=="LGET")
+        return handleLget(tokens,db);
     else if (cmd == "LLEN")
         return handleLlen(tokens, db);
     else if (cmd == "LPUSH")

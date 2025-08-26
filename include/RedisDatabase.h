@@ -24,6 +24,7 @@ class RedisDatabase{
     bool rename(const std::string &oldkey,const std::string&newkey);
 
     //list operations
+    std::vector<std::string> lget(const std::string&key);
     ssize_t llen(const std::string &key);
     void lpush(const std::string &key, const std::string &value);
     void rpush(const std::string &key, const std::string &value);

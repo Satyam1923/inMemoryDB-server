@@ -53,14 +53,17 @@ void RedisServer::run(){
         return ;
     }
     int opt = 1;
-    setsockopt(server_socket,SOL_SOCKET,SO_REUSEADDR,&opt,sizeof(opt));
+    if (setsockopt(server_socket, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt)) < 0)
+    {
+        perror("setsockopt(SO_REUSEADDR) failed");
+    }
     sockaddr_in serverAddr{};
     serverAddr.sin_family = AF_INET;
     serverAddr.sin_port = htons(port);
     serverAddr.sin_addr.s_addr = INADDR_ANY;
 
     if(bind(server_socket, (struct sockaddr*)&serverAddr, sizeof(serverAddr))<0){
-        std::cerr<<"Error Binding Server Socker\n";
+        std::cerr<<"Error Binding Server Socket\n";
         return ;
     }
 
